@@ -43,13 +43,16 @@ public class DoublyLinkedList<T> : IEnumerable<T>
     public DoublyLinkedListNode<T> AddFirst(T value)
     {
         var node = new DoublyLinkedListNode<T>(value);
-        node.List = this;
-        node.Next = head;
-        head = node;
-
-        if (tail == null)
+        if (head == null)
         {
+            head = node;
             tail = node;
+        }
+        else
+        {
+            node.Next = head;
+            head.Previous = node;
+            head = node;
         }
         Count++;
         return node;
@@ -67,6 +70,7 @@ public class DoublyLinkedList<T> : IEnumerable<T>
         else
         {
             tail.Next = node;
+            node.Previous = tail;
             tail = node;
         }
         Count++;
@@ -83,9 +87,16 @@ public class DoublyLinkedList<T> : IEnumerable<T>
 
         var newNode = new DoublyLinkedListNode<T>(value);
         newNode.List = this;
+        var nextNode = node.Next;
 
-        newNode.Next = node.Next;
+        newNode.Next = nextNode;
+        newNode.Previous = node;
         node.Next = newNode;
+
+        if(nextNode != null)
+        {
+            nextNode.Previous = newNode;
+        }
 
         Count++;
         return newNode;
@@ -99,16 +110,15 @@ public class DoublyLinkedList<T> : IEnumerable<T>
             return AddFirst(value);
         }
 
-        var previous = head;
-        while (previous.Next != node)
-        {
-            previous = previous.Next;
-        }
+        var previous = node.Previous;        
         var newNode = new DoublyLinkedListNode<T>(value);
         newNode.List = this;
 
         newNode.Next = node;
+        newNode.Previous = previous;
+
         previous.Next = newNode;
+        node.Previous = newNode;
 
         Count++;
         return newNode;
@@ -121,7 +131,6 @@ public class DoublyLinkedList<T> : IEnumerable<T>
             throw new InvalidOperationException("리스트가 비어있습니다.");
         }
         Remove(head);
-
     }
 
     public void RemoveLast()
@@ -202,8 +211,8 @@ public class DoublyLinkedList<T> : IEnumerable<T>
         while (current != null)
         {
             var next = current.Next;
+            current.Previous = null;
             current.Next = null;
-            current.List = null;
             current = next;
         }
         head = tail = null;
