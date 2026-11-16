@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "unity_data_structer_study.slnx"
+    "dotnet.defaultSolution": "unity-data-structer-study_t.slnx"
 }
