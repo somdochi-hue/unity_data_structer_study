@@ -39,11 +39,9 @@ public class TreeVisualizer : MonoBehaviour
                     horizontalSpacing * Mathf.Pow(2, root.Height - 3)
                 );
                 break;
-
             case SpacingTypes.LevelOrder:
                 AssignPositionsLevelOrder(root);
                 break;
-
             case SpacingTypes.InOrder:
                 {
                     int xIndex = 0;
@@ -96,7 +94,6 @@ public class TreeVisualizer : MonoBehaviour
         float offset
     )
     {
-        Debug.Log(node);
         if (node == null)
             return;
         nodePositions[node] = position;
@@ -111,20 +108,20 @@ public class TreeVisualizer : MonoBehaviour
         var queue = new Queue<TreeNode<TKey, TValue>>();
         queue.Enqueue(root);
 
-        for(int depth = 0; queue.Count > 0; depth++)
+        for (int depth = 0; queue.Count > 0; depth++)
         {
             int count = queue.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 var node = queue.Dequeue();
-                float x = (i - (count-1) * 0.5f) * horizontalSpacing;
+                float x = (i - (count - 1) * 0.5f) * horizontalSpacing;
                 nodePositions[node] = new Vector3(x, -depth * verticalSpacing, 0f);
 
-                if(node.Left != null)
+                if (node.Left != null)
                 {
                     queue.Enqueue(node.Left);
                 }
-                if(node.Right != null)
+                if (node.Right != null)
                 {
                     queue.Enqueue(node.Right);
                 }
@@ -132,13 +129,14 @@ public class TreeVisualizer : MonoBehaviour
         }
     }
 
-    private void AssignPositionsInOrder<TKey, TValue>
-        (TreeNode<TKey, TValue> node, int depth, ref int xIndex)
+    private void AssignPositionsInOrder<TKey, TValue>(
+        TreeNode<TKey, TValue> node,
+        int depth,
+        ref int xIndex)
     {
-        if( node == null)
-        {
+        if (node == null)
             return;
-        }
+
         AssignPositionsInOrder(node.Left, depth + 1, ref xIndex);
         nodePositions[node] = new Vector3(xIndex * horizontalSpacing, -depth * verticalSpacing, 0f);
         xIndex++;

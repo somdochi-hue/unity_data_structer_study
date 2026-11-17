@@ -42,7 +42,7 @@ public class BinarySearchTreeTest : MonoBehaviour
 
         treeVisualizer.Visualize(tree.GetRoot());
 
-        Debug.Log ($"[AVL] 균형 {(tree.IsBalanced() ? "O" : "X")}");
+        Debug.Log($"[AVL] 균형 {(tree.IsBalanced() ? "O" : "X")}");
     }
 
     void TestBinarySearchTree()

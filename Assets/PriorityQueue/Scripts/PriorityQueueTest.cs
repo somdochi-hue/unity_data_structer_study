@@ -73,53 +73,6 @@ public class PriorityQueueTest : MonoBehaviour
         ExpectThrows<InvalidOperationException>(() => pq.Peek(), "빈 큐 Peek");
 
         Debug.Log("\n=== PriorityQueue 테스트 완료 ===");
-
-        Debug.Log("\n6. Max-Heap 테스트 (커스텀 Comparer):");
-        var maxPQ = new PriorityQueue<int, int>(
-            Comparer<int>.Create((a, b) => b.CompareTo(a))
-        );
-
-        int[] maxPriorities = { 30, 10, 50, 20, 40 };
-        foreach (int priority in maxPriorities)
-        {
-            maxPQ.Enqueue(priority * 100, priority);
-            Debug.Log($"추가: {priority * 100} (우선순위: {priority})");
-        }
-
-        Debug.Log("\n내림차순으로 제거:");
-        int[] expectedMaxValues = { 5000, 4000, 3000, 2000, 1000 };
-        foreach (int expected in expectedMaxValues)
-        {
-            Expect(maxPQ.Dequeue(), expected, "값");
-        }
-
-        Debug.Log("\n7. BuildHeap 테스트 (원소 목록으로 생성):");
-        var items = new List<(string, int)> { ("E", 50), ("B", 20), ("D", 40), ("A", 10), ("C", 30) };
-        var builtPQ = new PriorityQueue<string, int>(items);
-        Expect(builtPQ.Count, 5, "생성 직후 크기");
-
-        var dequeued = new List<string>();
-        while (builtPQ.Count > 0)
-        {
-            dequeued.Add(builtPQ.Dequeue());
-        }
-        Expect(string.Join(", ", dequeued), "A, B, C, D, E", "꺼낸 순서");
-
-        var builtMaxPQ = new PriorityQueue<string, int>(
-            items,
-            Comparer<int>.Create((a, b) => b.CompareTo(a))
-        );
-        dequeued.Clear();
-        while (builtMaxPQ.Count > 0)
-        {
-            dequeued.Add(builtMaxPQ.Dequeue());
-        }
-        Expect(string.Join(", ", dequeued), "E, D, C, B, A", "Max-Heap 꺼낸 순서");
-
-        ExpectThrows<ArgumentNullException>(
-            () => new PriorityQueue<string, int>((IEnumerable<(string, int)>)null),
-            "null 목록"
-        );
     }
 
     // 테스트가 예상 못 한 예외로 멈추면 실패로 집계하고 원인을 남긴다

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class GraphSearch
 {
@@ -27,15 +30,15 @@ public class GraphSearch
             var current = stack.Pop();
             path.Add(current);
 
-            foreach (var adjacents in current.adjacents)
+            foreach (var adjacent in current.adjacents)
             {
-                if (!adjacents.CanVisit || visited.Contains(adjacents))
+                if (!adjacent.CanVisit || visited.Contains(adjacent))
                 {
                     continue;
                 }
 
-                stack.Push(adjacents);
-                visited.Add(adjacents);
+                stack.Push(adjacent);
+                visited.Add(adjacent);
             }
         }
     }
@@ -56,18 +59,17 @@ public class GraphSearch
             var current = queue.Dequeue();
             path.Add(current);
 
-            foreach (var adjacents in current.adjacents)
+            foreach (var adjacent in current.adjacents)
             {
-                if (!adjacents.CanVisit || visited.Contains(adjacents))
+                if (!adjacent.CanVisit || visited.Contains(adjacent))
                 {
                     continue;
                 }
 
-                queue.Enqueue(adjacents);
-                visited.Add(adjacents);
+                queue.Enqueue(adjacent);
+                visited.Add(adjacent);
             }
         }
-
     }
 
     public void DFSRecursive(GraphNode node)
@@ -75,24 +77,20 @@ public class GraphSearch
         path.Clear();
         graph.ResetNodePrevious();
 
-        var visited = new HashSet<GraphNode>();
-
-        RecursiveHelper(node, visited);
+        DFSRecursive(node, new HashSet<GraphNode>());
     }
 
-    protected void RecursiveHelper(GraphNode node, HashSet<GraphNode> visited)
+    protected void DFSRecursive(GraphNode node, HashSet<GraphNode> visited)
     {
-        if (node == null) return;
-
-        visited.Add(node);
         path.Add(node);
-
-        foreach (GraphNode nextNode in node.adjacents)
+        visited.Add(node);
+        foreach (var adjacent in node.adjacents)
         {
-            if (!visited.Contains(nextNode) && nextNode.CanVisit)
+            if (!adjacent.CanVisit || visited.Contains(adjacent))
             {
-                RecursiveHelper(nextNode, visited);
+                continue;
             }
+            DFSRecursive(adjacent, visited);
         }
     }
 
@@ -117,17 +115,17 @@ public class GraphSearch
                 break;
             }
 
-            foreach (var adjacents in current.adjacents)
+            foreach (var adjacent in current.adjacents)
             {
-                if (!adjacents.CanVisit || visited.Contains(adjacents))
+                if (!adjacent.CanVisit || visited.Contains(adjacent))
                 {
                     continue;
                 }
 
-                adjacents.previous = current;
+                adjacent.previous = current;
 
-                visited.Add(adjacents);
-                queue.Enqueue(adjacents);
+                visited.Add(adjacent);
+                queue.Enqueue(adjacent);
             }
         }
 
@@ -159,40 +157,35 @@ public class GraphSearch
         {
             distances[i] = int.MaxValue;
         }
-
         distances[startNode.id] = 0;
         pQueue.Enqueue(startNode, distances[startNode.id]);
 
         bool success = false;
         while (pQueue.Count > 0)
         {
-            var currentNote = pQueue.Dequeue();
-            if (visited.Contains(currentNote))
-            {
+            var currentNode = pQueue.Dequeue();
+            if (visited.Contains(currentNode))
                 continue;
-            }
 
-            if (currentNote == endNode)
+            if (currentNode == endNode)
             {
                 success = true;
                 break;
             }
 
-            visited.Add(currentNote);
+            visited.Add(currentNode);
 
-            foreach (var adjacents in currentNote.adjacents)
+            foreach (var adjacent in currentNode.adjacents)
             {
-                if (!adjacents.CanVisit || visited.Contains(adjacents))
-                {
+                if (!adjacent.CanVisit || visited.Contains(adjacent))
                     continue;
-                }
 
-                var newDistance = distances[currentNote.id] + adjacents.weight;
-                if (distances[adjacents.id] > newDistance)
+                var newDistance = distances[currentNode.id] + adjacent.weight;
+                if (distances[adjacent.id] > newDistance)
                 {
-                    distances[adjacents.id] = newDistance;
-                    adjacents.previous = currentNote;
-                    pQueue.Enqueue(adjacents, newDistance);
+                    distances[adjacent.id] = newDistance;
+                    adjacent.previous = currentNode;
+                    pQueue.Enqueue(adjacent, newDistance);
                 }
             }
         }
@@ -223,7 +216,7 @@ public class GraphSearch
         return Mathf.Abs(ax - bx) + Mathf.Abs(ay - by);
     }
 
-    public bool Astra(GraphNode startNode, GraphNode endNode)
+    public bool AStar(GraphNode startNode, GraphNode endNode)
     {
         path.Clear();
         graph.ResetNodePrevious();
@@ -235,40 +228,35 @@ public class GraphSearch
         {
             distances[i] = int.MaxValue;
         }
-
         distances[startNode.id] = 0;
         pQueue.Enqueue(startNode, distances[startNode.id] + Heuristic(startNode, endNode));
 
         bool success = false;
         while (pQueue.Count > 0)
         {
-            var currentNote = pQueue.Dequeue();
-            if (visited.Contains(currentNote))
-            {
+            var currentNode = pQueue.Dequeue();
+            if (visited.Contains(currentNode))
                 continue;
-            }
 
-            if (currentNote == endNode)
+            if (currentNode == endNode)
             {
                 success = true;
                 break;
             }
 
-            visited.Add(currentNote);
+            visited.Add(currentNode);
 
-            foreach (var adjacents in currentNote.adjacents)
+            foreach (var adjacent in currentNode.adjacents)
             {
-                if (!adjacents.CanVisit || visited.Contains(adjacents))
-                {
+                if (!adjacent.CanVisit || visited.Contains(adjacent))
                     continue;
-                }
 
-                var newDistance = distances[currentNote.id] + adjacents.weight;
-                if (distances[adjacents.id] > newDistance)
+                var newDistance = distances[currentNode.id] + adjacent.weight;
+                if (distances[adjacent.id] > newDistance)
                 {
-                    distances[adjacents.id] = newDistance;
-                    adjacents.previous = currentNote;
-                    pQueue.Enqueue(adjacents, newDistance + Heuristic(adjacents, endNode));
+                    distances[adjacent.id] = newDistance;
+                    adjacent.previous = currentNode;
+                    pQueue.Enqueue(adjacent, newDistance + Heuristic(adjacent, endNode));
                 }
             }
         }

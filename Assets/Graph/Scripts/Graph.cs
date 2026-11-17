@@ -5,9 +5,10 @@ public class Graph
 {
     public int rows = 0;
     public int cols = 0;
+
     public GraphNode[] nodes;
 
-    public void Init(int[,] grid) // 그리드의 가운데 빈 노드 만들기
+    public void Init(int[,] grid)
     {
         rows = grid.GetLength(0);
         cols = grid.GetLength(1);
@@ -21,29 +22,26 @@ public class Graph
 
         for (int r = 0; r < rows; r++)
         {
-            for (int c = 0; c < rows; c++)  // 4개 방향 연결 끊기
+            for (int c = 0; c < rows; c++)
             {
                 int index = r * cols + c;
                 nodes[index].weight = grid[r, c];
 
                 if (r - 1 >= 0 && grid[r - 1, c] >= 0)
                 {
-                    nodes[index].adjacents.Add(nodes[index - cols]);
+                    nodes[index].adjacents.Add(nodes[index - cols]); // U
                 }
-
-                if (c + 1 < cols && grid[r, c + 1] >= 0)
-                {
-                    nodes[index].adjacents.Add(nodes[index + 1]);
-                }
-
                 if (r + 1 < rows && grid[r + 1, c] >= 0)
                 {
-                    nodes[index].adjacents.Add(nodes[index + cols]);
+                    nodes[index].adjacents.Add(nodes[index + cols]); // D
                 }
-
+                if (c + 1 < cols && grid[r, c + 1] >= 0)
+                {
+                    nodes[index].adjacents.Add(nodes[index + 1]); // R
+                }
                 if (c - 1 >= 0 && grid[r, c - 1] >= 0)
                 {
-                    nodes[index].adjacents.Add(nodes[index - 1]);
+                    nodes[index].adjacents.Add(nodes[index - 1]); // L
                 }
             }
         }

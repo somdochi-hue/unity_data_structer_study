@@ -122,10 +122,7 @@ public class BinarySearchTree<TKey, TValue> : IDictionary<TKey, TValue>
 
     protected virtual void UpdateHeight(TreeNode<TKey, TValue> node)
     {
-        if (node != null)
-        {
-            node.Height = Mathf.Max(Height(node.Left), Height(node.Right)) + 1;
-        }        
+        node.Height = Mathf.Max(Height(node.Left), Height(node.Right)) + 1;
     }
 
     protected virtual int Height(TreeNode<TKey, TValue> node)

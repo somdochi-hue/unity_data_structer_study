@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public class GraphNode
 {
@@ -10,5 +9,5 @@ public class GraphNode
 
     public GraphNode previous = null;
 
-    public bool CanVisit => adjacents.Count > 0 && weight >= 0;    
+    public bool CanVisit => adjacents.Count > 0 && weight >= 0;
 }
