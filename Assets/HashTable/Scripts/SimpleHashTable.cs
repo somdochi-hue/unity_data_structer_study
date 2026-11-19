@@ -154,9 +154,9 @@ public class SimpleHashTable<TKey, TValue> : IDictionary<TKey, TValue>
 
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
-        if (TryGetValue(item.Key, out TValue value))
+        if (TryGetValue(item.Key, out TValue Value))
         {
-            return value.Equals(item.Value);
+            return EqualityComparer<TValue>.Default.Equals(item.Value);
         }
         return false;
     }
